@@ -41,7 +41,6 @@ func New(db *pgxpool.Pool) Repository {
 }
 
 func (r *repo) WithTx(ctx context.Context, fn func(DB) error) error {
-	// todo: review
 	tx, err := r.db.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel: pgx.ReadCommitted,
 	})

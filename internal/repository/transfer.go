@@ -11,23 +11,6 @@ import (
 func (r *repo) MakeTransfer(ctx context.Context, tx DB, senderID, receiverID int, amount int) error {
 	db := r.getExecutor(tx)
 
-	//todo: cleanup
-	//start := time.Now()
-	//_, err := db.Exec(ctx, `
-	//    SELECT * FROM users
-	//    WHERE id IN ($1, $2)
-	//    ORDER BY id
-	//    FOR UPDATE`, senderID, receiverID)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//duration := time.Since(start)
-	//if duration > 100*time.Millisecond {
-	//	// log.Printf("SLOW SELECT FOR UPDATE: sender=%d receiver=%d duration=%v\n",
-	//	//	senderID, receiverID, duration)
-	//}
-
 	_, err := db.Exec(ctx, `
 		INSERT INTO transfers (sender_id, receiver_id, amount)
 		VALUES ($1, $2, $3)
@@ -61,7 +44,7 @@ func (r *repo) MakeTransfer(ctx context.Context, tx DB, senderID, receiverID int
 
 func (r *repo) ListTransactions(ctx context.Context, tx DB, userID int) (*model.CoinHistory, error) {
 	db := r.getExecutor(tx)
-	// todo: can it be simplified?
+
 	rows, err := db.Query(ctx, `
 		SELECT 
 			'sent' as type,

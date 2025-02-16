@@ -62,9 +62,9 @@ issues:
   exclude:
     - ST1000
   exclude-rules:
-    - linters:
+    - source: "^//go:generate "
+      linters:
         - lll
-      source: "^//go:generate "
     - source: "ListTransactions"
       linters:
         - funlen
@@ -74,6 +74,10 @@ issues:
     - source: "getExecutor"
       linters:
         - ireturn
+    - source: "^func \\(c \\*Container\\)"
+      linters:
+        - ireturn
     - path: _test\.go
       linters:
         - funlen
+        - err113

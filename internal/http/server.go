@@ -39,7 +39,7 @@ func NewServer(container Container) *Server {
 	s.srv = &http.Server{
 		Addr:              container.Config().HTTP.Address(),
 		Handler:           s.router,
-		ReadHeaderTimeout: 3 * time.Second, // todo: what does it do?
+		ReadHeaderTimeout: 3 * time.Second,
 	}
 
 	return s

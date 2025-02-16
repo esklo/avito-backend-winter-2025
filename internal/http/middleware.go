@@ -32,15 +32,6 @@ func (s *Server) withAuth(next http.HandlerFunc) http.HandlerFunc {
 	})
 }
 
-//func (s *Server) withLogger(next http.HandlerFunc) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		t := time.Now()
-//
-//		next.ServeHTTP(w, r)
-//		log.Printf("[%s] %s %s\n", r.Method, r.URL.Path, time.Since(t))
-//	}
-//}
-
 func (s *Server) withRecover(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
