@@ -1,11 +1,11 @@
-FROM golang:1.23.6
+FROM golang:1.23.6 as build
 
-WORKDIR ${GOPATH}/avito-shop/
-COPY . ${GOPATH}/avito-shop/
+WORKDIR /go/src/app
+COPY . .
 
-RUN go build -o /build ./internal/cmd \
-    && go clean -cache -modcache
+RUN go mod download
+RUN CGO_ENABLED=0 go build -o /go/bin/app ./cmd
 
-EXPOSE 8080
-
-CMD ["/build"]
+FROM gcr.io/distroless/static-debian12
+COPY --from=build /go/bin/app /
+CMD ["/app"]

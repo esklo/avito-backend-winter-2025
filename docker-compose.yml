@@ -1,36 +1,46 @@
 services:
   avito-shop-service:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: avito-shop-service
+    restart: always
     ports:
-      - "8080:${SERVER_PORT}"
+      - "8080:${HTTP_PORT}"
     environment:
-      - DATABASE_PORT=${DATABASE_PORT}
-      - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - DATABASE_NAME=${DATABASE_NAME}
-      - DATABASE_HOST=${DATABASE_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
 
-      - SERVER_PORT=${SERVER_PORT}
+      - HTTP_HOST=${HTTP_HOST}
+      - HTTP_PORT=${HTTP_PORT}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       db:
         condition: service_healthy
     networks:
       - internal
+#    volumes:
+#      - ./:/app
   db:
     image: postgres:13
+    command: >
+      -c max_connections=1500
     container_name: postgres
+    restart: always
     environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - pgsql:/var/lib/postgresql/data
-      - ./migrations/:/docker-entrypoint-initdb.d/
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${DATABASE_NAME} -U $${DATABASE_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 5s
       timeout: 10s
       retries: 5
